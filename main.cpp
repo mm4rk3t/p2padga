@@ -4,8 +4,14 @@
 /* the fearsome TO-DO list
 	
 	[ ] find a nicer way of handling options (their display and input handling)
-	[x] finish ui skeleton
 	[ ] add torrent backend 
+	[ ] show list of trackers/seeders/progress per file
+	[ ] add log window
+	[ ] select save location
+
+	done:
+	[x] finish ui skeleton
+	[x] upload to gh
 
 */
 
