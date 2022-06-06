@@ -3,29 +3,30 @@
 
 /* the fearsome TO-DO list
 	
-	[ ] find a nicer way of handling options (their display and input handling)
-	[ ] add torrent backend 
 	[ ] show list of trackers/seeders/progress per file
 	[ ] add log window
 	[ ] select save location
+	[ ] fix bug when adding magnet files
 
 	done:
 	[x] finish ui skeleton
 	[x] upload to gh
-
+	[x] add torrent backen
 */
 
 int main()
 {
+	lt::session torrent_session;
+
 	initscr();
 	noecho();
 	keypad(stdscr, TRUE);
 	refresh();
 	curs_set(0);
-	/* BEGIN */
+	halfdelay(2);
 
 	WINDOW* torrent_window = newwin(getmaxy(stdscr), getmaxx(stdscr), 0, 0);
-	TorrentList torrent_list(torrent_window);
+	TorrentList torrent_list(torrent_window, &torrent_session);
 
 	// colors
 	start_color();
@@ -38,15 +39,15 @@ int main()
 	torrent_list.display();
 	while(char c = getch())
 	{
+		if(torrent_list.m_window_active)
+			if(torrent_list.handleInput(c) == 1)
+				break;
 		torrent_list.update();
-		if(torrent_list.handleInput(c) == 1)
-			break;
 		torrent_list.display();
-		
 	}
 
-	/* END */
 	endwin();
+
 	return 0;
 }
 
