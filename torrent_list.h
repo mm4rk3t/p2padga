@@ -6,8 +6,8 @@ class TorrentList
 {
 public:
 	std::vector<Torrent*> m_torrents;
-  std::vector<std::string> m_fields{"ID", "Name", "Size", "Progress", "Status", "Speed", "Seeds", "Ratio"};
-  std::vector<std::string> m_options{"(a)dd", "(f)ilter", "(s)ort", "f(i)les", "(q)uit"};
+  std::vector<std::string> m_fields{"Name", "ID", "Status", "Progress", "Size", "Speed", "Seeds", "Ratio"};
+  std::vector<std::string> m_options{"(a)dd", "(f)ilter", "(s)ort", "f(i)les", "(l)og", "(q)uit"};
   std::vector<std::string> m_torrent_options{"(c)ontinue", "(p)ause", "p(r)iority", "(d)elete", "(b)ack"};
   unsigned int m_selected = 0;
   unsigned int m_selected_file = 0;
@@ -39,35 +39,20 @@ public:
     }
     mvwchgat(this->m_window, 0, 0, getmaxx(this->m_window), A_STANDOUT, 1, NULL);
 
-    // display list of torrents
-    for (unsigned int i = 0; i < this->m_torrents.size(); i++)
+    wrefresh(this->m_window);
+    refresh();
+
+    // THE SEGFAULT WAS DUE TO ACCESSING AN UNINITIALIZED PART MEMORY , CHECK WHETHER THERE ARE TORRENTS
+    if(this->m_torrents.size() > 0)
     {
-      mvwprintw(this->m_window, i + 1, padding * 0, std::to_string(this->m_torrents[i]->m_id).c_str());
-      mvwprintw(this->m_window, i + 1, padding * 1, this->m_torrents[i]->m_name.c_str());
-      mvwprintw(this->m_window, i + 1, padding * 2, std::to_string(this->m_torrents[i]->m_size).c_str());
-      
-      // we need to to this to print floats with 2 point precision
-      std::stringstream ss;
-      ss << std::fixed << std::setprecision(2) << this->m_torrents[i]->m_progress;
-      std::string temp = ss.str();
-      mvwprintw(this->m_window, i + 1, padding * 3, temp.c_str());
-      ss.str("");
-
-      mvwprintw(this->m_window, i + 1, padding * 4, this->m_torrents[i]->m_status.c_str());
-      mvwprintw(this->m_window, i + 1, padding * 5, std::to_string(this->m_torrents[i]->m_speed).c_str());
-      mvwprintw(this->m_window, i + 1, padding * 6, std::to_string(this->m_torrents[i]->m_seeds).c_str());
-      
-      // again here
-      ss << std::fixed << std::setprecision(2) << this->m_torrents[i]->m_ratio;
-      temp = ss.str();
-      mvwprintw(this->m_window, i + 1, padding * 7, temp.c_str());
-
-
-      if(this->m_selected == i)
+      for(unsigned int j = 0; j < this->m_torrents.size(); j++)
       {
-        mvwchgat(this->m_window, i + 1, 0, getmaxx(this->m_window), A_NORMAL, 2, NULL);
-      }
+        for(unsigned int i = 0; i < this->m_fields.size(); i++)
+          mvwprintw(this->m_window, j + 1, padding * i, this->m_torrents[j]->get_string(this->m_fields[i]));
 
+        if(this->m_selected == j)
+          mvwchgat(this->m_window, j + 1, 0, getmaxx(this->m_window), A_NORMAL, 2, NULL);
+      }
     }
 
     // display options
@@ -75,13 +60,20 @@ public:
     for(unsigned int i = 0; i < this->m_options.size(); i++)
     {
       mvprintw(getmaxy(stdscr) - 1, start_x, this->m_options[i].c_str());
-
       start_x += getmaxx(stdscr) / this->m_options.size();
     }
     mvchgat(getmaxy(stdscr) - 1, 0, getmaxx(stdscr), A_STANDOUT, 1, NULL);
     
     wrefresh(this->m_window);
     refresh();
+  }
+
+  void display_log()
+  {
+    this->m_window_active = false;
+
+
+    this->m_window_active = true;
   }
 
   void init()
@@ -92,7 +84,10 @@ public:
   void update()
   {
     for(Torrent* t : this->m_torrents)
+    {
       t->fetch_data();
+      t->update_strings();
+    }
   }
 
   void select_next()
@@ -179,14 +174,14 @@ public:
     // add torrent to list using handle
     Torrent* t = new Torrent(&h);
   
-    this->m_torrents.push_back(t); // SEGFAULT HERE
+    this->m_torrents.push_back(t);
     /*
       Apparently, constructing vectors of raw pointers is a a very bad idea
-      so I should probably just use objects instead and leave that alone.
+      so I should probably just use objects(*) instead and leave that alone.
 
       Don't do it now, do it tomorrow, or any other day.
 
-      I don't know why this doesn't happen with .torrent.
+      ()*or smart ptrs
     */
   }
 
@@ -309,6 +304,10 @@ public:
           this->select_torrent();
           break;
         
+        case 'l':
+          this->display_log();
+          break;
+
         default:
           break;
 	  	}

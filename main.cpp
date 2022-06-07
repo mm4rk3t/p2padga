@@ -1,18 +1,29 @@
 #include "common.h"
 #include "torrent_list.h"
 
-/* the fearsome TO-DO list
+/* bugs / To-Do
 	
 	[ ] show list of trackers/seeders/progress per file
 	[ ] add log window
 	[ ] select save location
-	[ ] fix bug when adding magnet files
+	[ ] make everything less messy
+	[ ] add alerts
+	[ ] program state logic
+	[ ] can't output more than a single torrent at the same time 
+		(can download more just fine)
+	[ ] finish adding functionality
+	[ ] avoid overwriting torrent handles
 
 	done:
 	[x] finish ui skeleton
 	[x] upload to gh
-	[x] add torrent backen
+	[x] add torrent backend
+	[x] fix bug when adding magnet files
+	[x] weird output @ the beginning
+	[x] decouple output string from values
+
 */
+
 
 int main()
 {
@@ -23,9 +34,11 @@ int main()
 	keypad(stdscr, TRUE);
 	refresh();
 	curs_set(0);
-	halfdelay(2);
+	
 
 	WINDOW* torrent_window = newwin(getmaxy(stdscr), getmaxx(stdscr), 0, 0);
+	nodelay(torrent_window, true);
+
 	TorrentList torrent_list(torrent_window, &torrent_session);
 
 	// colors
@@ -37,17 +50,21 @@ int main()
 	bkgd(COLOR_PAIR(1));
 
 	torrent_list.display();
-	while(char c = getch())
+	while(true)
 	{
+		char c = wgetch(torrent_window);
+
 		if(torrent_list.m_window_active)
 			if(torrent_list.handleInput(c) == 1)
 				break;
+
 		torrent_list.update();
 		torrent_list.display();
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
 	}
 
 	endwin();
 
 	return 0;
 }
-

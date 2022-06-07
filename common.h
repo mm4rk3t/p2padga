@@ -8,6 +8,7 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <map>
 
 #include <libtorrent/session.hpp>
 #include <libtorrent/session_params.hpp>
