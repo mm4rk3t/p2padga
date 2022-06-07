@@ -3,17 +3,23 @@
 
 /* bugs / To-Do
 	
+	* IMPORTANT
+	[ ] avoid overwriting torrent handles
+	[ ] can't output more than a single torrent at the same time 
+		(can download more just fine)
+
+	* EASY
+	[ ] program state logic
+	[ ] limit str size and add ...
+
+	* OTHER
 	[ ] show list of trackers/seeders/progress per file
 	[ ] add log window
 	[ ] select save location
-	[ ] make everything less messy
+	[ ] add all torrent functionality
 	[ ] add alerts
-	[ ] program state logic
-	[ ] can't output more than a single torrent at the same time 
-		(can download more just fine)
-	[ ] finish adding functionality
-	[ ] avoid overwriting torrent handles
 
+	
 	done:
 	[x] finish ui skeleton
 	[x] upload to gh

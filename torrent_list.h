@@ -15,6 +15,7 @@ public:
   unsigned int m_window_y = getmaxy(this->m_window);
   unsigned int m_window_x = getmaxx(this->m_window);
   bool m_window_active = true;
+  unsigned int m_padding = 0;
 
   lt::session* m_torrent_session;
 
@@ -30,25 +31,26 @@ public:
     refresh();
     wrefresh(this->m_window);
 
-    int padding = getmaxx(this->m_window) / this->m_fields.size();
+    this->m_padding = getmaxx(this->m_window) / this->m_fields.size();
     unsigned int start_x = 0;
     for(unsigned int i = 0; i < this->m_fields.size(); i++)
     {
       mvwprintw(this->m_window, 0, start_x, this->m_fields[i].c_str());
-      start_x += padding;
+      start_x += m_padding;
     }
     mvwchgat(this->m_window, 0, 0, getmaxx(this->m_window), A_STANDOUT, 1, NULL);
 
     wrefresh(this->m_window);
     refresh();
 
+    // display torrents
     // THE SEGFAULT WAS DUE TO ACCESSING AN UNINITIALIZED PART MEMORY , CHECK WHETHER THERE ARE TORRENTS
     if(this->m_torrents.size() > 0)
     {
       for(unsigned int j = 0; j < this->m_torrents.size(); j++)
       {
         for(unsigned int i = 0; i < this->m_fields.size(); i++)
-          mvwprintw(this->m_window, j + 1, padding * i, this->m_torrents[j]->get_string(this->m_fields[i]));
+          mvwprintw(this->m_window, j + 1, this->m_padding * i, this->m_torrents[j]->get_string(this->m_fields[i]));
 
         if(this->m_selected == j)
           mvwchgat(this->m_window, j + 1, 0, getmaxx(this->m_window), A_NORMAL, 2, NULL);
@@ -86,7 +88,7 @@ public:
     for(Torrent* t : this->m_torrents)
     {
       t->fetch_data();
-      t->update_strings();
+      t->update_strings(this->m_padding);
     }
   }
 

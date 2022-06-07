@@ -52,12 +52,11 @@ public:
 		return this->m_strings[key].c_str();
 	}
 
-	void update_strings()
+	void update_strings(unsigned int padding)
 	{
 		std::stringstream ss;
 		std::string temp;
 
-		// "ID", "Name", "Size", "Progress", "Status", "Speed", "Seeds", "Ratio"
 		this->insert_string("ID", std::to_string(this->m_id));
 		this->insert_string("Name", this->m_name);
 	
@@ -84,5 +83,4 @@ public:
 		this->insert_string("Seeds", std::to_string(this->m_seeds));
 		this->insert_string("Ratio", std::to_string(0));
 	}
-
-}; 
+};
