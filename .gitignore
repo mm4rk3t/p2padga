@@ -1,7 +1,6 @@
-makefile
 p2padga
 run
-*.torrent
-dl-test/
 .vscode
+*.torrent
 bin/
+dl-test/
