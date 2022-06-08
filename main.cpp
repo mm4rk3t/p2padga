@@ -4,19 +4,20 @@
 /* bugs / To-Do
 	
 	* IMPORTANT
-	[ ] Solve files bug when adding magnet links
 
 	* EASY
 	[ ] limit str size and add ...
 	[ ] clear lines to avoid things like "finisheding"
 
 	* OTHER
-	[ ] show list of trackers/seeders/progress per file
+	[ ] show list of trackers, seeders and progress per file
 	[ ] add log window
-	[ ] add more torrent functionality
 	[ ] add alerts
 	[ ] adjust size of fields (for example: make ID 5 and Name 15)
 	[ ] adjust magnitude of size and velocity (not only GB but KB, MB, B and TB too)
+	[ ] choose not to download some files
+	[ ] change priority
+	[ ] create File object (similar to Torrent object)
 	
 	done:
 	[x] finish ui skeleton
@@ -30,6 +31,8 @@
 	[x] check if speed is correct
 	[x] select save location
 	[x] add file viewer
+	[x] Solve files bug when adding magnet links
+	[x] add more torrent functionality
 	
 */
 

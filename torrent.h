@@ -13,7 +13,7 @@ public:
 	std::map<std::string, std::string> m_strings;
 	std::vector<std::string> m_files_strings;
 
-	std::shared_ptr<const lt::torrent_info> m_info;
+	std::shared_ptr<const lt::torrent_info> m_info = nullptr;
 	lt::torrent_status m_status;
 
 	// fetched data
@@ -79,6 +79,16 @@ public:
 		}
 	}
 
+	void pause()
+	{
+		this->m_handle.pause();
+	}
+
+	void resume()
+	{
+		this->m_handle.resume();
+	}
+
 	void insert_string(std::string key, std::string value)
 	{
 		this->m_strings[key] = value;
@@ -129,16 +139,16 @@ public:
 		this->insert_string("Seeds", std::to_string(this->m_seeds));
 		this->insert_string("Ratio", std::to_string(0));
 		
-		
-		if(this->m_info->is_valid()) // THIS LINE CAUSES A SEGFAULT WHEN ADDING MAGNET LINKS!!!
+		if(this->m_handle.is_valid())
 		{
-			const lt::file_storage& files = this->m_info->files();
-			this->m_num_files = files.num_files();
-			for(unsigned int i = 0; i < this->m_num_files; i++)
-			this->m_files_strings.push_back(std::string(files.file_name(i)));
+			if(this->m_info != nullptr && this->m_info->is_valid())
+			{
+				const lt::file_storage& files = this->m_info->files();
+				this->m_num_files = files.num_files();
+				for(unsigned int i = 0; i < this->m_num_files; i++)
+				this->m_files_strings.push_back(std::string(files.file_name(i)));
+			}
 		}
-		
-		
 		
 	}
 };

@@ -8,7 +8,7 @@ public:
 	std::vector<Torrent*> m_torrents;
   std::vector<std::string> m_fields{"Name", "ID", "Status", "Progress", "Size", "Speed", "Seeds", "Ratio"};
   std::vector<std::string> m_options{"(a)dd", "(f)ilter", "(s)ort", "f(i)les", "(l)og", "(q)uit"};
-  std::vector<std::string> m_torrent_options{"(c)ontinue", "(p)ause", "p(r)iority", "(d)elete", "(b)ack"};
+  std::vector<std::string> m_torrent_options{"(r)esume", "(p)ause", "pri(o)rity", "(d)elete"};
   unsigned int m_selected = 0;
   unsigned int m_selected_file = 0;
   WINDOW* m_window;
@@ -253,7 +253,6 @@ public:
       //      mvwchgat(show_files_window, i + 1, 1, getmaxx(show_files_window) - 2, A_STANDOUT, 1, NULL);
     }
     
-
     // print options
     int start_x = 0;
     for(unsigned int i = 0; i < this->m_torrent_options.size(); i++)
@@ -270,19 +269,20 @@ public:
     char c = wgetch(show_files_window);
     switch(c)
     {
-      case 'c':
+      case 'r':
+        this->m_torrents[this->m_selected]->resume();
         break;
 
       case 'p':
+        this->m_torrents[this->m_selected]->pause();
         break;
 
-      case 'r':
+      case 'o':
         break;
 
       case 'd':
-        break;
-
-      case 'b':
+        this->m_torrent_session->remove_torrent(m_torrents[this->m_selected]->m_handle);
+        this->m_torrents.erase(this->m_torrents.begin() + this->m_selected);
         break;
 
       default:
