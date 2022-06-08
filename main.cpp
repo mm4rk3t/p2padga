@@ -9,8 +9,6 @@
 		(can download more just fine)
 
 	* EASY
-	[ ] program state logic
-	[ ] limit str size and add ...
 
 	* OTHER
 	[ ] show list of trackers/seeders/progress per file
@@ -27,7 +25,9 @@
 	[x] fix bug when adding magnet files
 	[x] weird output @ the beginning
 	[x] decouple output string from values
-
+	[x] program state logic
+	[x] limit str size and add ...
+	
 */
 
 

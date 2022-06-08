@@ -42,6 +42,36 @@ public:
 		}
 	}
 
+	std::string parse_state(int state)
+	{
+		switch (state)
+		{
+			case 1:
+				return "checking   ";
+			
+			case 2:
+				return "metadata   ";
+			
+			case 3:
+				return "downloading";
+	
+			case 4:
+				return "finished   ";
+
+			case 5:
+				return "seeding    ";
+
+			case 6:
+				return "peanuts    ";
+
+			case 7:
+				return "checking   ";
+	
+			default:
+				return "???        ";
+		}
+	}
+
 	void insert_string(std::string key, std::string value)
 	{
 		this->m_strings[key] = value;
@@ -58,8 +88,17 @@ public:
 		std::string temp;
 
 		this->insert_string("ID", std::to_string(this->m_id));
-		this->insert_string("Name", this->m_name);
-	
+		
+		if(this->m_name.size() >= padding) 
+		{
+			std::string temp_name = this->m_name;
+			temp_name.resize(padding - 4);
+			temp_name.append("...");
+			this->insert_string("Name", temp_name);
+		} else {
+			this->insert_string("Name", this->m_name);
+		}
+		
 		ss << std::fixed << std::setprecision(2) << this->m_size / (1024 * 1024 * 1024) << "GB";
     temp = ss.str();
 		this->insert_string("Size", temp);
@@ -72,7 +111,7 @@ public:
 		ss.str("");
 		temp = "";
 
-		this->insert_string("Status", "placeholder");
+		this->insert_string("Status", this->parse_state(this->m_state));
 
 		ss << std::fixed << std::setprecision(2) << this->m_speed / (1024 * 1024) << "MB/s";
     temp = ss.str();
