@@ -4,6 +4,7 @@
 /* bugs / To-Do
 	
 	* IMPORTANT
+	[ ] Solve files bug when adding magnet links
 
 	* EASY
 	[ ] limit str size and add ...
@@ -12,10 +13,10 @@
 	* OTHER
 	[ ] show list of trackers/seeders/progress per file
 	[ ] add log window
-	[ ] select save location
 	[ ] add more torrent functionality
 	[ ] add alerts
 	[ ] adjust size of fields (for example: make ID 5 and Name 15)
+	[ ] adjust magnitude of size and velocity (not only GB but KB, MB, B and TB too)
 	
 	done:
 	[x] finish ui skeleton
@@ -26,7 +27,9 @@
 	[x] decouple output string from values
 	[x] program state logic
 	[x] can't output more than a single torrent at the same time  (can download more just fine)
-	[x] check if speed is corre
+	[x] check if speed is correct
+	[x] select save location
+	[x] add file viewer
 	
 */
 

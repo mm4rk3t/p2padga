@@ -160,6 +160,34 @@ public:
     this->m_window_active = true;
   }
 
+  std::string get_save_path()
+  {
+    this->m_window_active = false;
+    
+    // make window appear
+    int size_y = 10;
+    int size_x = 50;
+    WINDOW* save_path_window = newwin(size_y, size_x, this->m_window_y / 2 - size_y / 2, this->m_window_x / 2 - size_x / 2);
+    box(save_path_window, 0, 0);
+    std::string text = "[ SAVE PATH ]";
+    mvwprintw(save_path_window, 0, size_x / 2 - text.size() / 2, text.c_str());
+    wrefresh(save_path_window);
+    refresh();
+
+    // input
+    WINDOW* input_window = newwin(size_y-4, size_x-4, getbegy(save_path_window) + 1, getbegx(save_path_window) + 2);
+    wrefresh(input_window);
+    refresh();
+
+    char str[9999];
+    mvwgetstr(input_window, 1, 1, str);
+
+    noecho();
+    this->m_window_active = true;
+
+    return str;
+  }
+
   void add_magnet(std::string magnet_link)
   {
     if(magnet_link.empty())
@@ -169,7 +197,7 @@ public:
 
     // torrent logic
     lt::add_torrent_params atp = lt::parse_magnet_uri(magnet_link);
-    atp.save_path = "./dl-test";
+    atp.save_path = this->get_save_path();
 	  lt::torrent_handle h = this->m_torrent_session->add_torrent(atp);
 
     // add torrent to list using handle
@@ -195,7 +223,7 @@ public:
 
     // torrent logic
     lt::add_torrent_params atp;
-    atp.save_path = "./dl-test";
+    atp.save_path = this->get_save_path();
     atp.ti = std::make_shared<lt::torrent_info>(torrent_file);
     lt::torrent_handle h = this->m_torrent_session->add_torrent(atp);
 
@@ -215,14 +243,16 @@ public:
     clrtobot();
 
     // print files
-    for(unsigned int i = 0; i < this->m_torrents[this->m_selected]->m_files.size(); i++)
+    
+    for(unsigned int i = 0; i < this->m_torrents[this->m_selected]->m_num_files; i++)
     {
-      mvwprintw(show_files_window, i + 1, 1, this->m_torrents[this->m_selected]->m_files[i].c_str());
-      
+      mvwprintw(show_files_window, i + 1, 1, this->m_torrents[this->m_selected]->m_files_strings[i].c_str());
+
       // turn on again when figuring out how to select files
       // if(i == this->m_selected_file)
       //      mvwchgat(show_files_window, i + 1, 1, getmaxx(show_files_window) - 2, A_STANDOUT, 1, NULL);
     }
+    
 
     // print options
     int start_x = 0;
