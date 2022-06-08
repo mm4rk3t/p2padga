@@ -17,6 +17,7 @@ a simple bittorrent client that uses libtorrent and ncurses
 - [ ] choose not to download some files
 - [ ] change priority
 - [ ] create File object (similar to Torrent object)
+- [ ] change color based on status and whether the torrent is paused
   
 * DONE:
 - [x] finish ui skeleton
