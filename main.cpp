@@ -4,19 +4,18 @@
 /* bugs / To-Do
 	
 	* IMPORTANT
-	[ ] avoid overwriting torrent handles
-	[ ] can't output more than a single torrent at the same time 
-		(can download more just fine)
 
 	* EASY
+	[ ] limit str size and add ...
+	[ ] clear lines to avoid things like "finisheding"
 
 	* OTHER
 	[ ] show list of trackers/seeders/progress per file
 	[ ] add log window
 	[ ] select save location
-	[ ] add all torrent functionality
+	[ ] add more torrent functionality
 	[ ] add alerts
-
+	[ ] adjust size of fields (for example: make ID 5 and Name 15)
 	
 	done:
 	[x] finish ui skeleton
@@ -26,7 +25,8 @@
 	[x] weird output @ the beginning
 	[x] decouple output string from values
 	[x] program state logic
-	[x] limit str size and add ...
+	[x] can't output more than a single torrent at the same time  (can download more just fine)
+	[x] check if speed is corre
 	
 */
 
@@ -67,7 +67,6 @@ int main()
 		torrent_list.update();
 		torrent_list.display();
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
 	}
 
 	endwin();

@@ -44,7 +44,6 @@ public:
     refresh();
 
     // display torrents
-    // THE SEGFAULT WAS DUE TO ACCESSING AN UNINITIALIZED PART MEMORY , CHECK WHETHER THERE ARE TORRENTS
     if(this->m_torrents.size() > 0)
     {
       for(unsigned int j = 0; j < this->m_torrents.size(); j++)
@@ -174,7 +173,7 @@ public:
 	  lt::torrent_handle h = this->m_torrent_session->add_torrent(atp);
 
     // add torrent to list using handle
-    Torrent* t = new Torrent(&h);
+    Torrent* t = new Torrent(h);
   
     this->m_torrents.push_back(t);
     /*
@@ -201,7 +200,7 @@ public:
     lt::torrent_handle h = this->m_torrent_session->add_torrent(atp);
 
     // add torrent to list using handle
-    Torrent* t = new Torrent(&h);
+    Torrent* t = new Torrent(h);
     this->m_torrents.push_back(t);
 
   }

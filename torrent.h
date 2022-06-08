@@ -5,9 +5,9 @@ class Torrent
 {
 public:
 
-	Torrent(lt::torrent_handle* handle) : m_handle(handle){}
+	Torrent(lt::torrent_handle handle) : m_handle(handle){}
 
-  lt::torrent_handle* m_handle;
+  lt::torrent_handle m_handle;
 	bool m_selected = false;
 	std::vector<std::string> m_files = {};
 	float m_ratio = 0;
@@ -26,9 +26,9 @@ public:
 
 	void fetch_data()
 	{
-		if(this->m_handle->is_valid())
+		if(this->m_handle.is_valid())
 		{
-			lt::torrent_status ts = this->m_handle->status();
+			lt::torrent_status ts = this->m_handle.status();
 			
 			this->m_id = ts.queue_position;
 			this->m_name = ts.name;
