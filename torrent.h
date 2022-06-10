@@ -146,9 +146,8 @@ public:
 				const lt::file_storage& files = this->m_info->files();
 				this->m_num_files = files.num_files();
 				for(unsigned int i = 0; i < this->m_num_files; i++)
-				this->m_files_strings.push_back(std::string(files.file_name(i)));
+					this->m_files_strings.push_back(std::string(files.file_name(i)));
 			}
 		}
-		
 	}
 };

@@ -5,7 +5,8 @@
 class TorrentList
 {
 public:
-	std::vector<Torrent*> m_torrents;
+	
+  std::vector<Torrent*> m_torrents;
   std::vector<std::string> m_fields{"Name", "ID", "Status", "Progress", "Size", "Speed", "Seeds", "Ratio"};
   std::vector<std::string> m_options{"(a)dd", "(f)ilter", "(s)ort", "f(i)les", "(l)og", "(q)uit"};
   std::vector<std::string> m_torrent_options{"(r)esume", "(p)ause", "pri(o)rity", "(d)elete"};
