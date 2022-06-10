@@ -2,13 +2,9 @@ a simple bittorrent client that uses libtorrent and ncurses
 
 
 ### TODO / bugs to fix
-* IMPORTANT
 
-* EASY
 - [ ] limit str size and add ...
 - [ ] clear lines to avoid things like "finisheding"
-
-* OTHER
 - [ ] show list of trackers, seeders and progress per file
 - [ ] add log window
 - [ ] add alerts
@@ -18,8 +14,9 @@ a simple bittorrent client that uses libtorrent and ncurses
 - [ ] change priority
 - [ ] create File object (similar to Torrent object)
 - [ ] change color based on status and whether the torrent is paused
+- [ ] track down and fix all causes of segfaults
   
-* DONE:
+### DONE:
 - [x] finish ui skeleton
 - [x] upload to gh
 - [x] add torrent backend
