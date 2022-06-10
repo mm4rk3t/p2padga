@@ -11,7 +11,6 @@ int main()
 	refresh();
 	curs_set(0);
 	
-
 	WINDOW* torrent_window = newwin(getmaxy(stdscr), getmaxx(stdscr), 0, 0);
 	nodelay(torrent_window, true);
 

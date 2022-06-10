@@ -4,3 +4,4 @@ run
 *.torrent
 bin/
 dl-test/
+bin/
