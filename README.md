@@ -42,10 +42,7 @@ If the compilation ended successfuly, there is going to be a folder named `bin` 
 Pull requests are welcome. If there's anything you wish to discuss, open an issue or contact me using the info on my profile. Please inform me of any bugs you find, I hope you find the program useful even in this very early stage.
 
 ## Known bugs
-- fetching metadata seems stalled when adding magnet links, however it is not, give it time
-- messed up strings
 - some strings are so long that they "overflow" the row
-- ghost handles (visible when viewing info after being deleted)
 
 ## TO-DO
 - [ ] limit string length if it is grater than padding between fields
