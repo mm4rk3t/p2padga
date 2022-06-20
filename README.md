@@ -47,6 +47,7 @@ Pull requests are welcome. If there's anything you wish to discuss, open an issu
 - [ ] change row color based on status and whether the torrent is paused
 - [ ] error handling
 - [ ] add ETA
+- [ ] optimize (windows refresh, fetch data, draws, etc)
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
