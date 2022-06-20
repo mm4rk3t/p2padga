@@ -79,6 +79,42 @@ public:
 		}
 	}
 
+	std::string handle_units(float n)
+	{
+
+		float new_number = 0.0f;
+		std::string unit = "";
+		std::stringstream ss;
+
+		if (n < 1024) // bytes
+		{
+			new_number = n;
+			unit = "B";
+		}
+
+		else if (n < (1024 * 1024)) // kilobytes
+		{
+			new_number = n / (1024);
+			unit = "KB";
+		}
+		
+		else if (n < (1024 * 1024 * 1024)) // megabytes
+		{
+			new_number = n / (1024 * 1024);
+			unit = "MB";
+		}
+
+		else // gigabytes
+		{
+			new_number = n / (1024 * 1024 * 1024);
+			unit = "GB";
+		}
+
+		ss << std::fixed << std::setprecision(2) << new_number << unit;
+		return ss.str();
+
+	}
+
 	void pause()
 	{
 		this->m_handle.pause();
@@ -116,25 +152,15 @@ public:
 			this->insert_string("Name", this->m_name);
 		}
 		
-		ss << std::fixed << std::setprecision(2) << this->m_size / (1024 * 1024 * 1024) << "GB";
-    temp = ss.str();
-		this->insert_string("Size", temp);
-		ss.str("");
-		temp = "";
+
+		this->insert_string("Size", this->handle_units(this->m_size));
 
 		ss << std::fixed << std::setprecision(2) << this->m_progress * 100 << "%%";
     temp = ss.str();
 		this->insert_string("Progress", temp);
-		ss.str("");
-		temp = "";
 
 		this->insert_string("Status", this->parse_state(this->m_state));
-
-		ss << std::fixed << std::setprecision(2) << this->m_speed / (1024 * 1024) << "MB/s";
-    temp = ss.str();
-		this->insert_string("Speed", temp);
-		ss.str("");
-		temp = "";
+		this->insert_string("Speed", this->handle_units(this->m_speed).append("/s"));
 
 		this->insert_string("Seeds", std::to_string(this->m_seeds));
 		this->insert_string("Ratio", std::to_string(0));

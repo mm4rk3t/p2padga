@@ -6,8 +6,9 @@ class TorrentList
 {
 public:
 	
-  std::vector<Torrent*> m_torrents;
-  std::vector<std::string> m_fields{"Name", "ID", "Status", "Progress", "Size", "Speed", "Seeds", "Ratio"};
+  // use smart ptrs for torrent list
+  std::vector<std::unique_ptr<Torrent>> m_torrents;
+  std::vector<std::string> m_fields{"ID", "Name", "Status", "Progress", "Size", "Speed", "Seeds", "Ratio"};
   std::vector<std::string> m_options{"(a)dd", "(f)ilter", "(s)ort", "f(i)les", "(l)og", "(q)uit"};
   std::vector<std::string> m_torrent_options{"(r)esume", "(p)ause", "pri(o)rity", "(d)elete"};
   unsigned int m_selected = 0;
@@ -29,9 +30,11 @@ public:
   {
     // display fields
     clear();
-    refresh();
     wrefresh(this->m_window);
+    refresh();
 
+    wmove(this->m_window, 0, 0);
+    wclrtoeol(this->m_window);
     this->m_padding = getmaxx(this->m_window) / this->m_fields.size();
     unsigned int start_x = 0;
     for(unsigned int i = 0; i < this->m_fields.size(); i++)
@@ -40,7 +43,6 @@ public:
       start_x += m_padding;
     }
     mvwchgat(this->m_window, 0, 0, getmaxx(this->m_window), A_STANDOUT, 1, NULL);
-
     wrefresh(this->m_window);
     refresh();
 
@@ -49,6 +51,8 @@ public:
     {
       for(unsigned int j = 0; j < this->m_torrents.size(); j++)
       {
+        wmove(this->m_window, j+1, 0);
+        wclrtoeol(this->m_window);
         for(unsigned int i = 0; i < this->m_fields.size(); i++)
           mvwprintw(this->m_window, j + 1, this->m_padding * i, this->m_torrents[j]->get_string(this->m_fields[i]));
 
@@ -56,6 +60,7 @@ public:
           mvwchgat(this->m_window, j + 1, 0, getmaxx(this->m_window), A_NORMAL, 2, NULL);
       }
     }
+
 
     // display options
     start_x = 0;
@@ -85,11 +90,13 @@ public:
 
   void update()
   {
-    for(Torrent* t : this->m_torrents)
+    for(const auto& t : this->m_torrents)
     {
       t->fetch_data();
       t->update_strings(this->m_padding);
     }
+    this->m_window_y = getmaxy(this->m_window);
+    this->m_window_x = getmaxx(this->m_window);
   }
 
   void select_next()
@@ -202,17 +209,10 @@ public:
 	  lt::torrent_handle h = this->m_torrent_session->add_torrent(atp);
 
     // add torrent to list using handle
-    Torrent* t = new Torrent(h);
+    //Torrent* t = new Torrent(h);
   
-    this->m_torrents.push_back(t);
-    /*
-      Apparently, constructing vectors of raw pointers is a a very bad idea
-      so I should probably just use objects(*) instead and leave that alone.
-
-      Don't do it now, do it tomorrow, or any other day.
-
-      ()*or smart ptrs
-    */
+    std::unique_ptr<Torrent> t(new Torrent(h));
+    this->m_torrents.push_back(std::move(t));
   }
 
   void add_torrent(std::string torrent_file)
@@ -229,22 +229,24 @@ public:
     lt::torrent_handle h = this->m_torrent_session->add_torrent(atp);
 
     // add torrent to list using handle
-    Torrent* t = new Torrent(h);
-    this->m_torrents.push_back(t);
+    std::unique_ptr<Torrent> t(new Torrent(h));
+    this->m_torrents.push_back(std::move(t));
 
   }
 
   void select_torrent()
   {
+    if(this->m_torrents.size() < 1)
+      return;
+
     this->m_window_active = false;
     WINDOW* show_files_window = newwin(this->m_window_y/2 - 1, this->m_window_x, this->m_window_y/2, 0);
     box(show_files_window, 0, 0);
     mvwprintw(show_files_window, 0, 5, this->m_torrents[this->m_selected]->m_name.c_str()); 
     mvwprintw(show_files_window, 0, 5 + this->m_torrents[this->m_selected]->m_name.size() + 1, this->m_torrents[this->m_selected]->m_path.c_str());
     clrtobot();
-
-    // print files
     
+    // print files
     for(unsigned int i = 0; i < this->m_torrents[this->m_selected]->m_num_files; i++)
     {
       mvwprintw(show_files_window, i + 1, 1, this->m_torrents[this->m_selected]->m_files_strings[i].c_str());
@@ -284,11 +286,13 @@ public:
       case 'd':
         this->m_torrent_session->remove_torrent(m_torrents[this->m_selected]->m_handle);
         this->m_torrents.erase(this->m_torrents.begin() + this->m_selected);
+        this->m_selected = 0;
         break;
 
       default:
         break;
     }
+    
     this->m_window_active = true;
   }
 
@@ -300,6 +304,12 @@ public:
   void sort()
   {
     // to-do
+  }
+
+  void handle_resize()
+  {
+    clear();
+    refresh();
   }
 
   int handleInput(int c)
@@ -338,6 +348,10 @@ public:
         
         case 'l':
           this->display_log();
+          break;
+
+        case KEY_RESIZE:
+          this->handle_resize();
           break;
 
         default:

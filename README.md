@@ -38,17 +38,14 @@ Pull requests are welcome. If there's anything you wish to discuss, open an issu
 
 ## TO-DO
 - [ ] limit string length if it is grater than padding between fields
-- [ ] implement behaviour for when the window resizes
-- [ ] clear rows before rendering strings to avoid things like "finisheding" or "7MB/ss"
 - [ ] show list of trackers, seeders and progress per file
 - [ ] add log/debug window (use libtorrent alerts if possible)
 - [ ] adjust padding of different fields (for example: make "ID" 5 and "Name" 15)
-- [ ] adjust magnitude of size and velocity (not only GB but KB, MB, B and TB too)
 - [ ] choose not to download some files
 - [ ] change torrent priority
 - [ ] create File object to organize things better (similar to Torrent object)
 - [ ] change row color based on status and whether the torrent is paused
-- [ ] track down and fix all causes of segfaults
+- [ ] error handling
 - [ ] add ETA
 
 ## License
