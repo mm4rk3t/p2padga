@@ -23,6 +23,17 @@ Run `make` inside of it to begin compilation.
 cd p2padga && make
 ```
 
+To install the compiled binary in `/usr/local/bin` (or wherever you want, the script can easily be modified), simply run:
+```bash
+sudo ./install.sh
+```
+
+Alternatively, uninstall with:
+```bash
+sudo ./uninstall.sh
+```
+Remember that the directory must match the one used in `install.sh`.
+
 ## Usage
 If the compilation ended successfuly, there is going to be a folder named `bin` where the `p2padga` executable resides. Once you run the program, it should be clear how to use it. 
 
