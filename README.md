@@ -50,24 +50,26 @@ I will separate what needs to be done in two categories so that I can tell at a 
 
 ### Important
 #### Files
-  - [ ] progress per file
-  - [ ] choose not to download
-  - [ ] create object to organize things better
+- [ ] progress per file
+- [ ] choose not to download
+- [ ] create object to organize things better
 
-- Torrent
-  - [ ] show list of trackers and seeders
-  - [ ] change torrent priority
+#### Torrent
+- [ ] show list of trackers and seeders
+- [ ] change torrent priority
+- [ ] handle behaviour after completion
 
-- Client
-  - [ ] add log/debug window
-  - [ ] error handling
-  - [ ] optimize windows refreshs, data fetchs, draws, etc
+#### Client
+- [ ] add log/debug window
+- [ ] error handling
+- [ ] optimize windows refreshs, data fetchs, draws, etc
 
 ### L4L (Leave for Later)
 - [ ] limit string length if it is grater than padding between fields
 - [ ] adjust padding of different fields (for example: make "ID" 5 and "Name" 15)
 - [ ] change row color based on status and whether the torrent is paused
-- [ ] add ETA
+- [ ] add ETA for completion
+- [ ] implement config file
 
 
 ## License
