@@ -49,7 +49,7 @@ Pull requests are welcome. If there's anything you wish to discuss, open an issu
 I will separate what needs to be done in two categories so that I can tell at a glance what to prioritize.
 
 ### Important
-- Files
+#### Files
   - [ ] progress per file
   - [ ] choose not to download
   - [ ] create object to organize things better
