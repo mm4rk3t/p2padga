@@ -49,16 +49,19 @@ Pull requests are welcome. If there's anything you wish to discuss, open an issu
 I will separate what needs to be done in two categories so that I can tell at a glance what to prioritize.
 
 ### Important
-- Files:
-  - [ ] show and progress per file
-  - [ ] choose not to download some files
-  - [ ] create File object to organize things better (similar to Torrent object)
+- Files
+  - [ ] progress per file
+  - [ ] choose not to download
+  - [ ] create object to organize things better
 
-- [ ] show list of trackers and seeders
-- [ ] add log/debug window (use libtorrent alerts if possible)
-- [ ] change torrent priority
-- [ ] error handling
-- [ ] optimize windows refreshs, data fetchs, draws, etc)
+- Torrent
+  - [ ] show list of trackers and seeders
+  - [ ] change torrent priority
+
+- Client
+  - [ ] add log/debug window
+  - [ ] error handling
+  - [ ] optimize windows refreshs, data fetchs, draws, etc
 
 ### L4L (Leave for Later)
 - [ ] limit string length if it is grater than padding between fields
