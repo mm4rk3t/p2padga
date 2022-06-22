@@ -4,8 +4,10 @@
 class Torrent
 {
 public:
-
-	Torrent(lt::torrent_handle handle) : m_handle(handle){}
+	Torrent(lt::torrent_handle handle)
+	{
+		m_handle = handle;
+	}
 
   lt::torrent_handle m_handle;
 	bool m_selected = false;
@@ -123,6 +125,26 @@ public:
 	void resume()
 	{
 		this->m_handle.resume();
+	}
+
+	void move_top()
+	{
+		m_handle.queue_position_top();
+	}
+
+	void move_up()
+	{
+		this->m_handle.queue_position_up();
+	}
+
+	void move_down()
+	{
+		this->m_handle.queue_position_down();
+	}
+
+	void move_bottom()
+	{
+		this->m_handle.queue_position_bottom();
 	}
 
 	void insert_string(std::string key, std::string value)

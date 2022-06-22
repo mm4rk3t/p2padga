@@ -1,12 +1,12 @@
 #pragma once
 #include "common.h"
 #include "torrent.h"
+#include "dialog.h"
 
 class TorrentList
 {
 public:
 	
-  // use smart ptrs for torrent list
   std::vector<std::unique_ptr<Torrent>> m_torrents;
   std::vector<std::string> m_fields{"ID", "Name", "Status", "Progress", "Size", "Speed", "Seeds", "Ratio"};
   std::vector<std::string> m_options{"(a)dd", "(f)ilter", "(s)ort", "f(i)les", "(l)og", "(q)uit"};
@@ -78,8 +78,6 @@ public:
   void display_log()
   {
     this->m_window_active = false;
-
-
     this->m_window_active = true;
   }
 
@@ -117,82 +115,49 @@ public:
   {
     this->m_window_active = false;
     
-    // make window appear
-    int size_y = 10;
-    int size_x = 50;
-    WINDOW* add_torrent_window = newwin(size_y, size_x, this->m_window_y / 2 - size_y / 2, this->m_window_x / 2 - size_x / 2);
-    box(add_torrent_window, 0, 0);
-    std::string text = "[ ADD TORRENT ]";
-    mvwprintw(add_torrent_window, 0, size_x / 2 - text.size() / 2, text.c_str());
-    
+    DialogBox add_dialog("[ ADD TORRENT ]", 10, 50, this->m_window, CENTER);
+
     // options
     std::vector<std::string> add_torrent_options{"(m)agnet", "(t)orrent"};
     int start_x = 1;
     for(unsigned int i = 0; i < add_torrent_options.size(); i++)
     {
-      mvwprintw(add_torrent_window, getmaxy(add_torrent_window) - 2, start_x, add_torrent_options[i].c_str());
-      start_x += getmaxx(add_torrent_window) / add_torrent_options.size();
+      mvwprintw(add_dialog.m_window, getmaxy(add_dialog.m_window) - 2, start_x, add_torrent_options[i].c_str());
+      start_x += getmaxx(add_dialog.m_window) / add_torrent_options.size();
     }
-    wrefresh(add_torrent_window);
+    wrefresh(add_dialog.m_window);
     refresh();
-
+    
     // input
-    WINDOW* input_window = newwin(size_y-4, size_x-4, getbegy(add_torrent_window) + 1, getbegx(add_torrent_window) + 2);
-    char str[9999];
-    char c = wgetch(add_torrent_window);
-    echo();
-
+    char c = wgetch(add_dialog.m_window);
     switch(c)
     {
       case 'm':
-        mvwchgat(add_torrent_window, getmaxy(add_torrent_window) - 2, 1, getmaxx(add_torrent_window) / 2 -1, A_STANDOUT, 1, NULL);
-        wrefresh(add_torrent_window);
+        mvwchgat(add_dialog.m_window, getmaxy(add_dialog.m_window) - 2, 1, getmaxx(add_dialog.m_window) / 2 -1, A_STANDOUT, 1, NULL);
+        wrefresh(add_dialog.m_window);
         refresh();
-        mvwgetstr(input_window, 1, 1, str);
-        this->add_magnet(std::string(str));
+        this->add_magnet(std::string(add_dialog.get_input()));
         break;
 
       case 't':
-        mvwchgat(add_torrent_window, getmaxy(add_torrent_window) - 2, size_x / 2 + 1, getmaxx(add_torrent_window) / 2 - 2, A_STANDOUT, 1, NULL);
-        wrefresh(add_torrent_window);
+        mvwchgat(add_dialog.m_window, getmaxy(add_dialog.m_window) - 2, getmaxx(add_dialog.m_window) / 2 + 1, getmaxx(add_dialog.m_window) / 2 - 2, A_STANDOUT, 1, NULL);
+        wrefresh(add_dialog.m_window);
         refresh();
-        mvwgetstr(input_window, 1, 1, str);
-        this->add_torrent(std::string(str));
+        this->add_torrent(std::string(add_dialog.get_input()));
         break;
 
       default:
         break;
     }
-
-    noecho();
     this->m_window_active = true;
   }
 
   std::string get_save_path()
   {
     this->m_window_active = false;
-    
-    // make window appear
-    int size_y = 10;
-    int size_x = 50;
-    WINDOW* save_path_window = newwin(size_y, size_x, this->m_window_y / 2 - size_y / 2, this->m_window_x / 2 - size_x / 2);
-    box(save_path_window, 0, 0);
-    std::string text = "[ SAVE PATH ]";
-    mvwprintw(save_path_window, 0, size_x / 2 - text.size() / 2, text.c_str());
-    wrefresh(save_path_window);
-    refresh();
-
-    // input
-    WINDOW* input_window = newwin(size_y-4, size_x-4, getbegy(save_path_window) + 1, getbegx(save_path_window) + 2);
-    wrefresh(input_window);
-    refresh();
-
-    char str[9999];
-    mvwgetstr(input_window, 1, 1, str);
-
-    noecho();
+    DialogBox save_dialog("[ SAVE PATH ]", 10, 50, this->m_window, CENTER);
+    std::string str = save_dialog.get_input();
     this->m_window_active = true;
-
     return str;
   }
 
@@ -203,13 +168,9 @@ public:
     std::string str = "Parsing magnet uri: "  + magnet_link;
     mvwprintw(this->m_window, this->m_window_y - 2, 0, str.c_str());
 
-    // torrent logic
     lt::add_torrent_params atp = lt::parse_magnet_uri(magnet_link);
     atp.save_path = this->get_save_path();
 	  lt::torrent_handle h = this->m_torrent_session->add_torrent(atp);
-
-    // add torrent to list using handle
-    //Torrent* t = new Torrent(h);
   
     std::unique_ptr<Torrent> t(new Torrent(h));
     this->m_torrents.push_back(std::move(t));
@@ -222,16 +183,49 @@ public:
     std::string str = "Parsing torrent file: "  + torrent_file;
     mvwprintw(this->m_window, this->m_window_y - 2, 0, str.c_str());
 
-    // torrent logic
     lt::add_torrent_params atp;
     atp.save_path = this->get_save_path();
     atp.ti = std::make_shared<lt::torrent_info>(torrent_file);
     lt::torrent_handle h = this->m_torrent_session->add_torrent(atp);
 
-    // add torrent to list using handle
     std::unique_ptr<Torrent> t(new Torrent(h));
     this->m_torrents.push_back(std::move(t));
 
+  }
+
+  void change_priority()
+  {
+    this->m_window_active = false;
+  
+    std::vector<std::string> options = {"(1) Top", "(2) Up", "(3) Down", "(4) Bottom"};
+
+    DialogList priority_dialog("[ Priority ]", 6, 50, this->m_window, CENTER, options);
+    priority_dialog.display_list();
+
+    char c = wgetch(priority_dialog.m_window);
+    switch(c)
+    {
+      case '1':
+        this->m_torrents[this->m_selected]->move_top();
+        break;
+
+      case '2':
+        this->m_torrents[this->m_selected]->move_up();
+        break;
+
+      case '3':
+        this->m_torrents[this->m_selected]->move_down();
+        break;
+      
+      case '4':
+        this->m_torrents[this->m_selected]->move_bottom();
+        break;
+
+      default:
+        break;
+    }
+    
+    this->m_window_active = true;
   }
 
   void select_torrent()
@@ -239,37 +233,23 @@ public:
     if(this->m_torrents.size() < 1)
       return;
 
-    this->m_window_active = false;
-    WINDOW* show_files_window = newwin(this->m_window_y/2 - 1, this->m_window_x, this->m_window_y/2, 0);
-    box(show_files_window, 0, 0);
-    mvwprintw(show_files_window, 0, 5, this->m_torrents[this->m_selected]->m_name.c_str()); 
-    mvwprintw(show_files_window, 0, 5 + this->m_torrents[this->m_selected]->m_name.size() + 1, this->m_torrents[this->m_selected]->m_path.c_str());
-    clrtobot();
-    
-    // print files
-    for(unsigned int i = 0; i < this->m_torrents[this->m_selected]->m_num_files; i++)
-    {
-      mvwprintw(show_files_window, i + 1, 1, this->m_torrents[this->m_selected]->m_files_strings[i].c_str());
+    DialogList files_dialog(this->m_torrents[this->m_selected]->m_name, 0, 0, this->m_window, DOWN, this->m_torrents[this->m_selected]->m_files_strings);
+    files_dialog.display_list();
 
-      // turn on again when figuring out how to select files
-      // if(i == this->m_selected_file)
-      //      mvwchgat(show_files_window, i + 1, 1, getmaxx(show_files_window) - 2, A_STANDOUT, 1, NULL);
-    }
-    
     // print options
     int start_x = 0;
     for(unsigned int i = 0; i < this->m_torrent_options.size(); i++)
     {
       mvprintw(getmaxy(stdscr) - 1, start_x, this->m_torrent_options[i].c_str());
-      start_x += getmaxx(show_files_window) / this->m_torrent_options.size();
+      start_x += getmaxx(files_dialog.m_window) / this->m_torrent_options.size();
     }
-    mvchgat(getmaxy(stdscr) - 1, 0, getmaxx(show_files_window), A_STANDOUT, 1, NULL);
+    mvchgat(getmaxy(stdscr) - 1, 0, getmaxx(files_dialog.m_window), A_STANDOUT, 1, NULL);
 
-    wrefresh(show_files_window);
+    wrefresh(files_dialog.m_window);
     refresh();
 
     // handle input
-    char c = wgetch(show_files_window);
+    char c = wgetch(files_dialog.m_window);
     switch(c)
     {
       case 'r':
@@ -281,8 +261,8 @@ public:
         break;
 
       case 'o':
+        this->change_priority();
         break;
-
       case 'd':
         this->m_torrent_session->remove_torrent(m_torrents[this->m_selected]->m_handle);
         this->m_torrents.erase(this->m_torrents.begin() + this->m_selected);

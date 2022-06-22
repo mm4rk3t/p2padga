@@ -56,13 +56,15 @@ I will separate what needs to be done in two categories so that I can tell at a 
 
 #### Torrent
 - [ ] show list of trackers and seeders
-- [ ] change torrent priority
 - [ ] handle behaviour after completion
+- [ ] resume previous sessions
 
 #### Client
 - [ ] add log/debug window
 - [ ] error handling
 - [ ] optimize windows refreshs, data fetchs, draws, etc
+- [ ] filter
+- [ ] sort
 
 ### L4L (Leave for Later)
 - [ ] limit string length if it is grater than padding between fields
