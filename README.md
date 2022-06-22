@@ -45,17 +45,27 @@ Pull requests are welcome. If there's anything you wish to discuss, open an issu
 - some strings are so long that they "overflow" the row
 
 ## TO-DO
-- [ ] limit string length if it is grater than padding between fields
-- [ ] show list of trackers, seeders and progress per file
+
+I will separate what needs to be done in two categories so that I can tell at a glance what to prioritize.
+
+### Important
+- Files:
+  - [ ] show and progress per file
+  - [ ] choose not to download some files
+  - [ ] create File object to organize things better (similar to Torrent object)
+
+- [ ] show list of trackers and seeders
 - [ ] add log/debug window (use libtorrent alerts if possible)
-- [ ] adjust padding of different fields (for example: make "ID" 5 and "Name" 15)
-- [ ] choose not to download some files
 - [ ] change torrent priority
-- [ ] create File object to organize things better (similar to Torrent object)
-- [ ] change row color based on status and whether the torrent is paused
 - [ ] error handling
+- [ ] optimize windows refreshs, data fetchs, draws, etc)
+
+### L4L (Leave for Later)
+- [ ] limit string length if it is grater than padding between fields
+- [ ] adjust padding of different fields (for example: make "ID" 5 and "Name" 15)
+- [ ] change row color based on status and whether the torrent is paused
 - [ ] add ETA
-- [ ] optimize (windows refresh, fetch data, draws, etc)
+
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
