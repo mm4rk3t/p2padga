@@ -64,7 +64,7 @@ I will separate what needs to be done in two categories so that I can tell at a 
 
 
 ### L4L (Leave for Later)
-- [ ] limit string length if it is grater than padding between fields
+- [ ] limit string length if it is greater than padding between fields
 - [ ] adjust padding of different fields (for example: make "ID" 5 and "Name" 15)
 - [ ] change row color based on status and whether the torrent is paused
 - [ ] add ETA for completion
