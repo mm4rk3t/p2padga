@@ -1,5 +1,6 @@
 #pragma once
 #include "common.h"
+#include "file.h"
 
 class Torrent
 {
@@ -13,7 +14,6 @@ public:
 	bool m_selected = false;
 	float m_ratio = 0;
 	std::map<std::string, std::string> m_strings;
-	std::vector<std::string> m_files_strings;
 
 	std::shared_ptr<const lt::torrent_info> m_info = nullptr;
 	lt::torrent_status m_status;
@@ -29,6 +29,7 @@ public:
 	std::string m_path = "";
 	int m_state = 0;
 	unsigned int m_num_files = 0;
+	std::vector<File> m_files;
 
 	void fetch_data()
 	{
@@ -36,7 +37,6 @@ public:
 		{
 			this->m_status = this->m_handle.status();
 	
-			// get_torrent_info() is deprecated
 			this->m_info = this->m_handle.torrent_file();
 			
 			this->m_id = this->m_status.queue_position;
@@ -48,83 +48,37 @@ public:
 			this->m_progress = this->m_status.progress;
 			this->m_path = this->m_status.save_path;
 			this->m_state = this->m_status.state;
+
+			if(this->m_info != nullptr && this->m_info->is_valid())
+			{
+				const lt::file_storage& files = this->m_info->files();
+				
+				this->m_num_files = files.num_files();
+				
+				for(unsigned int i = 0; i < this->m_num_files; i++)
+				{
+					if(this->m_files.size() < this->m_num_files)
+					{
+						this->m_files.push_back(File());
+					}
+						
+					this->m_files[i].m_name = std::string(files.file_name(i));
+					this->m_files[i].m_size = files.file_size(i);
+				}
+			}
 		}
-	}
-
-	std::string parse_state(int state)
-	{
-		switch (state)
-		{
-			case 1:
-				return "checking   ";
-			
-			case 2:
-				return "metadata   ";
-			
-			case 3:
-				return "downloading";
-	
-			case 4:
-				return "finished   ";
-
-			case 5:
-				return "seeding    ";
-
-			case 6:
-				return "peanuts    ";
-
-			case 7:
-				return "checking   ";
-	
-			default:
-				return "???        ";
-		}
-	}
-
-	std::string handle_units(float n)
-	{
-
-		float new_number = 0.0f;
-		std::string unit = "";
-		std::stringstream ss;
-
-		if (n < 1024) // bytes
-		{
-			new_number = n;
-			unit = "B";
-		}
-
-		else if (n < (1024 * 1024)) // kilobytes
-		{
-			new_number = n / (1024);
-			unit = "KB";
-		}
-		
-		else if (n < (1024 * 1024 * 1024)) // megabytes
-		{
-			new_number = n / (1024 * 1024);
-			unit = "MB";
-		}
-
-		else // gigabytes
-		{
-			new_number = n / (1024 * 1024 * 1024);
-			unit = "GB";
-		}
-
-		ss << std::fixed << std::setprecision(2) << new_number << unit;
-		return ss.str();
-
 	}
 
 	void pause()
 	{
 		this->m_handle.pause();
+		this->m_handle.unset_flags(lt::torrent_flags::auto_managed);
 	}
 
 	void resume()
 	{
 		this->m_handle.resume();
+		this->m_handle.set_flags(lt::torrent_flags::auto_managed);
 	}
 
 	void move_top()
@@ -174,28 +128,28 @@ public:
 			this->insert_string("Name", this->m_name);
 		}
 		
-
-		this->insert_string("Size", this->handle_units(this->m_size));
+		this->insert_string("Size", handle_units(this->m_size));
 
 		ss << std::fixed << std::setprecision(2) << this->m_progress * 100 << "%%";
     temp = ss.str();
 		this->insert_string("Progress", temp);
 
-		this->insert_string("Status", this->parse_state(this->m_state));
-		this->insert_string("Speed", this->handle_units(this->m_speed).append("/s"));
+		this->insert_string("Status", parse_state(this->m_state));
+		this->insert_string("Speed", handle_units(this->m_speed).append("/s"));
 
 		this->insert_string("Seeds", std::to_string(this->m_seeds));
 		this->insert_string("Ratio", std::to_string(0));
-		
-		if(this->m_handle.is_valid())
+	}
+
+	void update()
+	{
+		for(unsigned int i = 0; i < this->m_num_files; i++)
 		{
-			if(this->m_info != nullptr && this->m_info->is_valid())
-			{
-				const lt::file_storage& files = this->m_info->files();
-				this->m_num_files = files.num_files();
-				for(unsigned int i = 0; i < this->m_num_files; i++)
-					this->m_files_strings.push_back(std::string(files.file_name(i)));
-			}
+			if(this->m_files[i].m_download)
+				this->m_handle.file_priority(i, 4);
+			else
+				this->m_handle.file_priority(i, 0);
 		}
 	}
+
 };

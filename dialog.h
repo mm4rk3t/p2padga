@@ -77,7 +77,9 @@ public:
   void display_list()
   {
     for(unsigned int i = 0; i < this->m_list.size(); i++)
+    {
       mvwprintw(this->m_window, i + 1, 1, this->m_list[i].c_str());
+    }
 
     wrefresh(this->m_window);
     refresh;

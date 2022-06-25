@@ -49,22 +49,19 @@ Pull requests are welcome. If there's anything you wish to discuss, open an issu
 I will separate what needs to be done in two categories so that I can tell at a glance what to prioritize.
 
 ### Important
-#### Files
-- [ ] progress per file
-- [ ] choose not to download
-- [ ] create object to organize things better
+
+#### UI
+- [ ] add 'selectable' in dialog list
+- [ ] be able to select files
 
 #### Torrent
-- [ ] show list of trackers and seeders
-- [ ] handle behaviour after completion
 - [ ] resume previous sessions
 
 #### Client
 - [ ] add log/debug window
 - [ ] error handling
 - [ ] optimize windows refreshs, data fetchs, draws, etc
-- [ ] filter
-- [ ] sort
+
 
 ### L4L (Leave for Later)
 - [ ] limit string length if it is grater than padding between fields
@@ -72,6 +69,10 @@ I will separate what needs to be done in two categories so that I can tell at a 
 - [ ] change row color based on status and whether the torrent is paused
 - [ ] add ETA for completion
 - [ ] implement config file
+- [ ] show list of trackers and seeders
+- [ ] handle behaviour after completion
+- [ ] filter
+- [ ] sort
 
 
 ## License

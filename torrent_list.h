@@ -91,6 +91,7 @@ public:
     for(const auto& t : this->m_torrents)
     {
       t->fetch_data();
+      t->update();
       t->update_strings(this->m_padding);
     }
     this->m_window_y = getmaxy(this->m_window);
@@ -228,12 +229,23 @@ public:
     this->m_window_active = true;
   }
 
-  void select_torrent()
+  void torrent_info()
   {
     if(this->m_torrents.size() < 1)
       return;
 
-    DialogList files_dialog(this->m_torrents[this->m_selected]->m_name, 0, 0, this->m_window, DOWN, this->m_torrents[this->m_selected]->m_files_strings);
+    std::vector<std::string> files_str;
+
+    for(unsigned int i = 0; i < this->m_torrents[this->m_selected]->m_num_files; i++)
+    {
+      std::string check = this->m_torrents[this->m_selected]->m_files[i].m_download ? "[x] " : "[ ] ";
+      check.append(handle_units(this->m_torrents[this->m_selected]->m_files[i].m_size));
+      check.append(" ");
+      check.append(this->m_torrents[this->m_selected]->m_files[i].m_name);
+      files_str.push_back(check);
+    }
+     
+    DialogList files_dialog(this->m_torrents[this->m_selected]->m_name, 0, 0, this->m_window, DOWN, files_str);
     files_dialog.display_list();
 
     // print options
@@ -323,7 +335,7 @@ public:
           break;
 
         case 'i':
-          this->select_torrent();
+          this->torrent_info();
           break;
         
         case 'l':
