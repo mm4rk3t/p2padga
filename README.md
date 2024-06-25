@@ -34,9 +34,11 @@ sudo ./uninstall.sh
 ```
 Remember that the directory must match the one used in `install.sh`.
 
-## Usage
-If the compilation ended successfuly, there is going to be a folder named `bin` where the `p2padga` executable resides. Once you run the program, it should be clear how to use it. 
+## Preview
+![p2padga](https://github.com/mm4rk3t/p2padga/assets/45017214/97b3e2ce-aadb-46b0-8cb0-2351a02e800c)
 
+## Usage
+If the compilation ended successfuly, there is going to be a folder named `bin` where the `p2padga` executable resides. Once you run the program, it should be clear how to use it. You can browse the files using k and j.
 
 ## Contributing
 Pull requests are welcome. If there's anything you wish to discuss, open an issue or contact me using the info on my profile. Please inform me of any bugs you find, I hope you find the program useful even in this very early stage.
@@ -61,6 +63,7 @@ I will separate what needs to be done in two categories so that I can tell at a 
 - [ ] add log/debug window
 - [ ] error handling
 - [ ] optimize windows refreshs, data fetchs, draws, etc
+- [ ] add lacking functionality
 
 
 ### L4L (Leave for Later)
