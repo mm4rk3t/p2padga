@@ -35,7 +35,7 @@ sudo ./uninstall.sh
 Remember that the directory must match the one used in `install.sh`.
 
 ## Preview
-![p2padga](https://github.com/mm4rk3t/p2padga/assets/45017214/97b3e2ce-aadb-46b0-8cb0-2351a02e800c)
+![p2padga_good](https://github.com/mm4rk3t/p2padga/assets/45017214/fdf4d055-cda6-4ff7-8639-406f95299c6a)
 
 ## Usage
 If the compilation ended successfuly, there is going to be a folder named `bin` where the `p2padga` executable resides. Once you run the program, it should be clear how to use it. You can browse the files using k and j.
