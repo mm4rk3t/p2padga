@@ -1,7 +1,4 @@
-p2padga
-run
-.vscode
+bin/
+build/
 *.torrent
-bin/
-dl-test/
-bin/
+.vscode/
