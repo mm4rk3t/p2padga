@@ -1,82 +1,93 @@
 # p2padga
 
-p2padga is a simple bittorrent client built using [libtorrent](https://github.com/arvidn/libtorrent) and [ncurses](https://github.com/mirror/ncurses).
+A small terminal BitTorrent client built on [libtorrent](https://github.com/arvidn/libtorrent) and [ncurses](https://invisible-island.net/ncurses/).
 
-**Disclaimer:** As of now, there are plenty of unimplemented features and the code might be full of bugs/bad practices. Thread with care, and by no means use this to learn. This is my first relatively "big" project, which I am using to learn how to combine libraries, build systems, source control systems, et cetera. So don't be surprised if it sucks.
-
-## Installation
-
-Before starting, make sure you have the following dependences installed on your system:
-
-- `boost`
-- `ncurses`
-- `libtorrent`
- 
-Clone the repository.
-
-```bash
-git clone https://github.com/mm4rk3t/p2padga
-```
-Run `make` inside of it to begin compilation.
-
-```bash
-cd p2padga && make
-```
-
-To install the compiled binary in `/usr/local/bin` (or wherever you want, the script can easily be modified), simply run:
-```bash
-sudo ./install.sh
-```
-
-Alternatively, uninstall with:
-```bash
-sudo ./uninstall.sh
-```
-Remember that the directory must match the one used in `install.sh`.
-
-## Preview
 ![p2padga_good](https://github.com/mm4rk3t/p2padga/assets/45017214/fdf4d055-cda6-4ff7-8639-406f95299c6a)
 
-## Usage
-If the compilation ended successfuly, there is going to be a folder named `bin` where the `p2padga` executable resides. Once you run the program, it should be clear how to use it. You can browse the files using k and j.
+- Add magnet links, bare info-hashes or `.torrent` files, from the UI or the command line
+- Pause, resume, recheck, reorder the queue, remove (with or without the downloaded files)
+- Choose which files of a torrent to download
+- Torrents and their progress survive restarts
+- Log view for tracker and peer errors
 
-## Contributing
-Pull requests are welcome. If there's anything you wish to discuss, open an issue or contact me using the info on my profile. Please inform me of any bugs you find, I hope you find the program useful even in this very early stage.
+## Installing
 
-## Known bugs
-- some strings are so long that they "overflow" the row
+You need a C++20 compiler, `make`, `pkg-config`, and the libtorrent and ncurses development packages:
 
-## TO-DO
+| Distro | Packages |
+|---|---|
+| Fedora | `gcc-c++ make pkgconf rb_libtorrent-devel ncurses-devel boost-devel` |
+| Debian / Ubuntu | `g++ make pkg-config libtorrent-rasterbar-dev libncurses-dev libboost-dev` |
+| Arch | `base-devel libtorrent-rasterbar ncurses boost` |
 
-I will separate what needs to be done in two categories so that I can tell at a glance what to prioritize.
+Then:
 
-### Important
+```sh
+git clone https://github.com/mm4rk3t/p2padga
+cd p2padga
+make
+sudo make install          # installs to /usr/local/bin
+```
 
-#### UI
-- [ ] add 'selectable' in dialog list
-- [ ] be able to select files
+`make install PREFIX=~/.local` installs for your user only. `make uninstall` removes it again.
 
-#### Torrent
-- [ ] resume previous sessions
+## Using it
 
-#### Client
-- [ ] add log/debug window
-- [ ] error handling
-- [ ] optimize windows refreshs, data fetchs, draws, etc
-- [ ] add lacking functionality
+```sh
+p2padga                                   # open the client
+p2padga file.torrent 'magnet:?xt=...'     # add torrents on startup
+p2padga -s ~/Videos file.torrent          # ...into a specific folder
+```
 
+| Key | Action |
+|---|---|
+| `a` | add a magnet link, info-hash or `.torrent` file |
+| `j` `k` / arrows | move; `g` `G` first / last |
+| `enter` / `l` | files of the selected torrent (`space` toggles a file, `a` all, `n` none) |
+| `p` / `space` | pause or resume |
+| `+` `-` | move up / down in the download queue |
+| `r` | recheck downloaded data |
+| `d` | remove the torrent, keep its files |
+| `D` | remove the torrent and delete its files |
+| `L` | log |
+| `?` | help |
+| `q` | quit (progress is saved) |
 
-### L4L (Leave for Later)
-- [ ] limit string length if it is greater than padding between fields
-- [ ] adjust padding of different fields (for example: make "ID" 5 and "Name" 15)
-- [ ] change row color based on status and whether the torrent is paused
-- [ ] add ETA for completion
-- [ ] implement config file
-- [ ] show list of trackers and seeders
-- [ ] handle behaviour after completion
-- [ ] filter
-- [ ] sort
+## Configuration
 
+The first run writes a commented config to `~/.config/p2padga/config`:
+
+```ini
+save_path = ~/Downloads
+listen_interfaces = 0.0.0.0:6881,[::]:6881
+outgoing_interface =        # e.g. tun0: send all traffic through your VPN
+encryption = prefer         # prefer | require | disable
+dht = true
+lsd = true
+upnp = false                # don't open router ports unless you ask for it
+natpmp = false
+anonymous_mode = false
+download_limit = 0          # KiB/s, 0 = unlimited
+upload_limit = 0
+max_active_downloads = 3
+max_active_seeds = 5
+```
+
+Torrent state lives in `~/.local/share/p2padga/` (it follows `XDG_CONFIG_HOME` and `XDG_DATA_HOME`).
+
+## Security
+
+Torrents come from strangers, so p2padga treats everything inside them as hostile:
+
+- **Terminal output is escaped.** Torrent names, file names and tracker messages are decoded and stripped of control characters before they're drawn. A name can't inject escape sequences to recolour the screen, retitle your terminal or hide text with right-to-left overrides. Text is never used as a format string.
+- **Input is bounded.** `.torrent` files over 32 MiB are refused before parsing, and text input has a length limit.
+- **Paths can't escape.** libtorrent sanitizes file paths inside torrents, so `../../etc/passwd` lands inside the torrent's folder.
+- **State is private.** Config, resume data and session state are written atomically with mode `0600` in `0700` directories, and named by info-hash only. A lock file stops two instances from corrupting each other's state.
+- **Network hardening.** Peers and trackers can't make p2padga connect to privileged ports or local services, HTTPS tracker certificates are verified, internationalized tracker hostnames (homograph tricks) are refused, and UPnP/NAT-PMP are off by default.
+- **Hardened build.** `_FORTIFY_SOURCE=3`, stack protector, full RELRO, PIE and non-executable stack.
+
+What it does **not** do: BitTorrent is not anonymous. Peers and trackers see your IP address, and peer encryption only hides the traffic from simple throttling. If that matters to you, use a VPN and set `outgoing_interface`, so nothing leaks out if the VPN drops.
 
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
+
+[MIT](LICENSE)
