@@ -2,7 +2,7 @@
 
 A small terminal BitTorrent client built on [libtorrent](https://github.com/arvidn/libtorrent) and [ncurses](https://invisible-island.net/ncurses/).
 
-![p2padga_good](https://github.com/mm4rk3t/p2padga/assets/45017214/fdf4d055-cda6-4ff7-8639-406f95299c6a)
+![p2padga downloading two torrents](docs/screenshot.png)
 
 - Add magnet links, bare info-hashes or `.torrent` files, from the UI or the command line
 - Pause, resume, recheck, reorder the queue, remove (with or without the downloaded files)
